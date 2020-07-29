@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+<p><a href="{% url 'login' %}"></a></p>
+<p><a href="{% url 'password_reset' %}">Forget Password?</a></p>
+
+<form method="post">
+{% csrf_token %}
+{{form.as_p}}
+
+<input type="submit" value="submit">
+</form>
+
+{% endblock %}

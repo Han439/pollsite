@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}{{poll.question}}{%endblock%}
+
+{% block content %}
+<div class="poll">
+	<h3>{{ poll.question }}</h3>
+	<p>{{poll.user.first_name}}</p>
+	<ul>
+		{% for tag in poll.tag.all %}
+		<li>{{ tag }}</li>
+		{% endfor %}
+	</ul>
+	<form action="{% url 'poll_detail' pk=poll.pk %}" method="POST">
+		{% csrf_token %}
+		{% for option in poll.polloption_set.all %}
+		<input type="radio" name="option" value="{{ option.pk }}" id="option{{ forloop.counter }}">
+		<label for="option{{ forloop.counter }}">{{ option.option }}</label><br>
+		{% endfor %}
+		<input type="submit" value="Vote">
+	</form>
+</div>
+{% endblock content %}

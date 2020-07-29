@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="profile-info">
+	<p>Email: {{user.email}}</p>
+	<p>Username: {{user.first_name}} {{user.last_name}}</p>
+	<p><a href="{% url 'edit_profile' %}">Edit profile</a></p>
+</div>
+<div class="poll">
+	{% if polls %}
+	<h3>Your Polls</h3>
+	{% for poll in polls %}
+		<h3>{{ poll.question }}</h3>
+		<ul>
+			{% for tag in poll.tag.all %}
+			<li>{{ tag }}</li>
+			{% endfor %}
+		</ul>
+		<ul>
+			{% for option in poll.polloption_set.all %}
+			<li>{{ option.option }} -- {{ option.vote }}</li>
+			{% endfor %}
+		</ul>
+	{% endfor %}
+	{% endif %}
+</div>
+{% endblock content %}
