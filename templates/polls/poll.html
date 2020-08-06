@@ -3,11 +3,26 @@
 {% block title %}Polls{% endblock %}
 
 {% block content %}
+    <div class="title">
+        {% if request.user.is_authenticated %}
+        <p>Hello, <a href="{% url 'profile' %}">{{request.user.first_name }}</a></p>
+        {% endif %}
+        <h2>Latest polls</h2>
+        <p><a href="{% url 'create_poll' %}"><i class="fas fa-plus"></i></a></p>
+    </div>
     <div class="poll">
     {% for poll in all_polls %}
         <div class="poll-container">
-            <h2>{{ poll.question }}</h2>
-            <p><a href="{% url 'poll_detail' pk=poll.pk %}">Vote Me</a></p>
+            <div class="nav">
+                <div></div>
+                <div></div>
+            </div>
+        	<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.get_time_delta }} ago</p>
+        	<p class="poll-subject">{{ poll.get_question }}</p>
+        	<p class="all-votes">{{ poll.get_total_vote }} votes</p>
+            <p>
+            	<a href="{% url 'poll_detail' pk=poll.pk %}" class="vote-now">VOTE ME</a>
+            </p>
         </div>
     {% endfor %}
     </div>

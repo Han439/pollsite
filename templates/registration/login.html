@@ -9,15 +9,19 @@
 {% endif %}
 
 {% if not user.is_authenticated %}
-<p>Please Login to see this page</p>
 {% endif %}
 
 <form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-{{form.as_p}}
-
-<input type="submit" value="login">
-<input type="hidden" name="next" value="{{ next }}">
+	{% csrf_token %}
+	<div class="form-layout">
+		<h2 class="form-title">Login</h2>
+		<div class="form form-layout form-container">
+			{{form}}
+		</div>
+		<input type="submit" value="login" class="btn">
+	</div>
+	
+	<input type="hidden" name="next" value="{{ next }}">
 </form>
 
 {% endblock %}

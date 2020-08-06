@@ -7,7 +7,7 @@ from django.forms import formset_factory, modelformset_factory, inlineformset_fa
 # Create your views here.
 
 def poll(request):
-	all_polls = PollQuestion.objects.all()
+	all_polls = PollQuestion.objects.all().order_by("-date")
 	return render(request, 'polls/poll.html', {'all_polls': all_polls})
 
 def poll_detail(request, pk):
@@ -51,36 +51,50 @@ def poll_result(request, pk):
 
 
 def create_poll(request):
-	option_formset = modelformset_factory(PollOption, fields=('option',), extra=3)
+	if not request.user.is_authenticated:
+		return redirect(reverse("login"))
+	else:
+		option_formset = modelformset_factory(PollOption, fields=('option',), extra=2)
 
-	if request.method == 'POST':
-		question_form = PollQuestionForm(request.POST)
-		option_form = option_formset(request.POST)
-		if question_form.is_valid() and option_form.is_valid():
-			question = question_form.save(commit=False)
-			question.user = request.user
-			question.save()
-			options = option_form.save(commit=False)
-			for option in options:
-				option.question = question
-				option.save()
-			return redirect(reverse('all_poll'))
+		if request.method == 'POST':
+			question_form = PollQuestionForm(request.POST)
+			option_form = option_formset(request.POST)
+			if question_form.is_valid() and option_form.is_valid():
+				question = question_form.save(commit=False)
+				question.user = request.user
+				question.save()
+				options = option_form.save(commit=False)
+				for option in options:		
+					option.question = question
+					option.save()
+				return redirect(reverse('all_poll'))
 
-	question_form = PollQuestionForm()
-	option_form = option_formset(queryset=PollOption.objects.none())
-	context = {
-		'question_form': question_form,
-		'option_form': option_form,
-	}
+		question_form = PollQuestionForm()
+		option_form = option_formset(queryset=PollOption.objects.none())
+		context = {
+			'question_form': question_form,
+			'option_form': option_form,
+		}
 
-	return render(request, 'polls/poll_create.html', context)
+		return render(request, 'polls/poll_create.html', context)
 
 def profile(request):
 	user = request.user
-	polls = PollQuestion.objects.filter(user=user)
+	form = UserForm(instance=user)
+	polls = PollQuestion.objects.filter(user=user).order_by("-date")
 	context = {
 		'polls': polls,
-	}
+		'form': form,
+	}	
+
+	if request.method == 'POST':
+		form = UserForm(request.POST, instance=user)
+		if form.is_valid():
+			form.save()
+			return render(request, 'polls/profile.html', context)
+	else:
+		return render(request, 'polls/profile.html', context)
+	
 	return render(request, 'polls/profile.html', context)
 
 def edit_profile(request):

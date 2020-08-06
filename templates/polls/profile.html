@@ -3,27 +3,41 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-<div class="profile-info">
-	<p>Email: {{user.email}}</p>
-	<p>Username: {{user.first_name}} {{user.last_name}}</p>
-	<p><a href="{% url 'edit_profile' %}">Edit profile</a></p>
-</div>
-<div class="poll">
-	{% if polls %}
-	<h3>Your Polls</h3>
-	{% for poll in polls %}
-		<h3>{{ poll.question }}</h3>
-		<ul>
-			{% for tag in poll.tag.all %}
-			<li>{{ tag }}</li>
+<div class="profile-layout">
+	<form method="post">
+	{% csrf_token %}
+	<div class="form-layout">
+		<h2 class="form-title">Profile</h2>
+		<div class="form form-layout form-container">
+			<p>{{request.user.email}}</p>
+			{{form}}
+		</div>
+		<input type="submit" value="Update" class="btn">
+	</div>
+	</form>
+	<div class="">
+		{% if polls %}
+			<h3>Your Polls</h3>
+			{% for poll in polls %}
+				<div class="poll-container">
+					<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.get_time_delta }} ago</p>
+				    <p class="poll-subject">{{poll.question}}</p>
+				    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
+					<!-- <ul>
+						{% for tag in poll.tag.all %}
+						<li>{{ tag }}</li>
+						{% endfor %}
+					</ul> -->
+					<ul class="poll-result">
+						{% for option in poll.polloption_set.all %}
+						<li class="poll-result-detail">
+							<span style="width:{{option.get_percentage}}%">{{ option.option }}</span>
+							{{ option.get_percentage }} %
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
 			{% endfor %}
-		</ul>
-		<ul>
-			{% for option in poll.polloption_set.all %}
-			<li>{{ option.option }} -- {{ option.vote }}</li>
-			{% endfor %}
-		</ul>
-	{% endfor %}
-	{% endif %}
-</div>
+		{% endif %}
+	</div>
 {% endblock content %}

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}	
 
 {% block title %}New Poll{% endblock %}
 
@@ -7,10 +7,115 @@
 
 
 <form method="post">
-{% csrf_token %}
-{{question_form.as_p}}
-{{option_form.as_p}}
-<input type="submit" value="create">
+	{% csrf_token %}
+	<div class="form-layout">
+		<h2 class="form-title">Make a poll</h2>
+		<div class="form question-form">
+	      <label for="id_question">Question</label>
+	      <input
+	        type="text"
+	        name="question"
+	        maxlength="250"
+	        required
+	        id="id_question"
+	        class="input-box"
+	      />
+	    </div>
+		
+	    <input
+	      type="hidden"
+	      name="form-TOTAL_FORMS"
+	      value="2"
+	      id="id_form-TOTAL_FORMS"
+	    /><input
+	      type="hidden"
+	      name="form-INITIAL_FORMS"
+	      value="0"
+	      id="id_form-INITIAL_FORMS"
+	    /><input
+	      type="hidden"
+	      name="form-MIN_NUM_FORMS"
+	      value="0"
+	      id="id_form-MIN_NUM_FORMS"
+	    /><input
+	      type="hidden"
+	      name="form-MAX_NUM_FORMS"
+	      value="1000"
+	      id="id_form-MAX_NUM_FORMS"
+	    />
+
+	    <div class="form-container option-form form-layout">
+
+		    <div id="option-form" class="form-layout">
+		      <label for="id_form-1-option">Option 1</label>
+		      <input
+		        type="text"
+		        name="form-1-option"
+		        maxlength="200"
+		        id="id_form-1-option"
+		        class="input-box"
+		      /><input type="hidden" name="form-1-id" id="id_form-1-id" />
+
+		      <label for="id_form-2-option">Option 2</label>
+		      <input
+		        type="text"
+		        name="form-2-option"
+		        maxlength="200"
+		        id="id_form-2-option"
+		        class="input-box"
+		      /><input type="hidden" name="form-2-id" id="id_form-2-id" />
+		    </div>
+	    
+	    	<button type="button" id="add-btn" class="add-btn"><i class="fas fa-plus"></i></button>
+		</div>
+		<input type="submit" value="create" class="btn">
+	</div>
 </form>
+
+<script type="text/javascript">
+
+	let add = document.querySelector("#add-btn");
+	add.addEventListener("click", handleAdd);
+
+	let form = document.querySelector("#option-form");
+
+	let manageForm = document.getElementById("id_form-TOTAL_FORMS");
+	let formId = 3;
+
+	function handleAdd(e) { 
+		if (formId < 5) {
+	  		let label = document.createElement("label");
+	  		label.for = "id_form-" + formId + "-option";
+	  		label.innerHTML = "Option" + formId;
+
+	  		let input = document.createElement("input");
+	  		input.type = "text";
+	  		input.name = "form-" + formId + "-option";
+	  		input.maxlength = "200";
+	  		input.id = "id_form-" + formId + "-option";
+	  		input.className = "input-box";
+
+	  		let input1 = document.createElement("input");
+	  		input1.type = "hidden";
+	  		input1.name =  "form-" + formId + "-id";
+	  		input1.id = "id_form-" + formId + "-id";
+
+	  		console.log(formId);
+
+	  		form.appendChild(label);
+	  		form.appendChild(input);
+	  		form.appendChild(input1);
+
+	  		formId += 1;
+	  		manageForm.value += 1;
+
+	  		let icon = document.querySelector("#add-btn i")
+			if (formId >= 5) { add.style.visibility = "hidden"; }
+	  	};
+	}
+
+	console.log(add)
+
+</script>
 
 {% endblock %}

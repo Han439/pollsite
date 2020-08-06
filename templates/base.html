@@ -6,23 +6,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{%endblock%}</title>
-    <link rel="stylesheet" href="{% static 'css/poll.css' %}">
+    <script src="https://kit.fontawesome.com/e5b4c762d2.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chilanka&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/poll4.css' %}">
+
 </head>
 <body>
     <div class="page-header">
-        <h1><a href="{% url 'all_poll' %}">Poll Me</a></h1>
-        {% if user.is_authenticated %}
-        <p><a href="{% url 'profile' %}">Hello {{user.first_name}}</a></p>
-        <a href="{% url 'logout' %}">Logout</a>
-        <a href="{% url 'password_change' %}">Change Password</a>
-        <p><a href="{% url 'create_poll' %}">Make poll</a></p>
-        {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'registration' %}">Register</a>
-        <a href="{% url 'password_reset' %}">Forget Password</a>
-        {% endif %}
-    </div>
-    
+        <h1><a href="{% url 'all_poll' %}">P<i class="fas fa-check-circle"></i>ll Me!</a></h1>
+        <div class="auth">
+            {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}">Logout</a>
+            <a href="{% url 'password_change' %}">Change Password</a>
+            {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'registration' %}">Register</a>
+            {% endif %}
+        </div>
+    </div>  
     {% block content %}
     {% endblock %}
 

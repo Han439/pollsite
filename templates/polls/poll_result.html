@@ -1,19 +1,27 @@
 {% extends 'base.html' %}
 
+{% block title %}Result{% endblock %}
+
 {% block content %}
-<div class="poll">
-	<h3>{{ poll.question }}</h3>
-	<ul>
+<div class="">
+	<div class="poll-container poll-container-expand">
+	<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.get_time_delta }} ago</p>
+    <p class="poll-subject">{{poll.question}}</p>
+    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
+	<!-- <ul>
 		{% for tag in poll.tag.all %}
 		<li>{{ tag }}</li>
 		{% endfor %}
-	</ul>
-	<ul>
+	</ul> -->
+	<ul class="poll-result">
 		{% for option in poll.polloption_set.all %}
-		<li>{{ option.option }} -- {{ option.vote }}</li>
+		<li class="poll-result-detail">
+			<span style="width:{{option.get_percentage}}%">{{ option.option }}</span>
+			{{ option.get_percentage }} %
+		</li>
 		{% endfor %}
 	</ul>
-	<h4>Comments Section</h4>
+	<!-- <h4>Comments Section</h4>
 	{% if request.user.is_authenticated %}
 	<form method="POST">
 		{% csrf_token %}
@@ -33,6 +41,6 @@
 			{% endif %}
 		</li>
 		{% endfor %}
-	</ul>
+	</ul> -->
 </div>
 {% endblock content %}

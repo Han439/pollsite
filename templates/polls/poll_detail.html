@@ -3,21 +3,42 @@
 {% block title %}{{poll.question}}{%endblock%}
 
 {% block content %}
-<div class="poll">
-	<h3>{{ poll.question }}</h3>
-	<p>{{poll.user.first_name}}</p>
-	<ul>
+<div class="poll-container poll-container-expand">
+	<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.get_time_delta }} ago</p>
+    <p class="poll-subject">{{poll.question}}</p>
+    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
+	<!-- <ul>
 		{% for tag in poll.tag.all %}
 		<li>{{ tag }}</li>
 		{% endfor %}
-	</ul>
+	</ul> -->
 	<form action="{% url 'poll_detail' pk=poll.pk %}" method="POST">
 		{% csrf_token %}
 		{% for option in poll.polloption_set.all %}
-		<input type="radio" name="option" value="{{ option.pk }}" id="option{{ forloop.counter }}">
-		<label for="option{{ forloop.counter }}">{{ option.option }}</label><br>
+			<p class="radio-input">
+				<input type="radio" name="option" value="{{ option.pk }}" id="option{{ forloop.counter }}">
+				<label for="option{{ forloop.counter }}"><span style="width: 30%">{{ option.option }}</span></label>
+			</p>
 		{% endfor %}
-		<input type="submit" value="Vote">
+		<input type="submit" value="Vote" class="vote-now">
 	</form>
+
+	<script type="text/javascript">
+		// let label = document.querySelectorAll(".radio-input label");
+
+		// for (let i = 0; i < label.length; i++) {
+		//   label[i].addEventListener("click", handleVote);
+		// }
+
+		// let span = document.querySelectorAll(".radio-input span");
+		// let radio = document.querySelectorAll(".radio-input input[type=radio]");
+
+		// function handleVote(e) {
+		//   for (let i = 0; i < span.length; i++) {
+		//     span[i].className = "vote-result";
+		//   }
+		// }
+
+	</script>
 </div>
 {% endblock content %}
