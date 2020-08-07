@@ -4,12 +4,17 @@
 
 {% block content %}
 
-
-
-<form method="post">
-{% csrf_token %}
-{{form.as_p}}
-<input type="submit" value="update">
+<form method="post" action="{% url 'edit_profile' %}">
+	{% csrf_token %}
+	<div class="form-layout">
+		<h2 class="form-title">Edit profile</h2>
+		<div class="form form-layout form-container">
+			<p class="user-email">{{request.user.email}}</p>
+			{{form}}
+		</div>
+		<input type="submit" value="Update" class="btn">
+	</div>
+	
 </form>
 
 {% endblock %}

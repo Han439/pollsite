@@ -5,7 +5,7 @@
 {% block content %}
     <div class="title">
         {% if request.user.is_authenticated %}
-        <p>Hello, <a href="{% url 'profile' %}">{{request.user.first_name }}</a></p>
+        <p>Hello, <a href="{% url 'profile' %}" style="color: #065fd4">{{request.user.first_name }}</a></p>
         {% endif %}
         <h2>Latest polls</h2>
         <p><a href="{% url 'create_poll' %}"><i class="fas fa-plus"></i></a></p>

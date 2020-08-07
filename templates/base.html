@@ -8,10 +8,11 @@
     <title>{% block title %}{%endblock%}</title>
     <script src="https://kit.fontawesome.com/e5b4c762d2.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Chilanka&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/poll4.css' %}">
+    <link rel="stylesheet" href="{% static 'css/poll5.css' %}">
 
 </head>
 <body>
+    <div class="main-container">
     <div class="page-header">
         <h1><a href="{% url 'all_poll' %}">P<i class="fas fa-check-circle"></i>ll Me!</a></h1>
         <div class="auth">
@@ -23,9 +24,13 @@
             <a href="{% url 'registration' %}">Register</a>
             {% endif %}
         </div>
-    </div>  
+    </div>
+    <div>
     {% block content %}
     {% endblock %}
-
+    </div>
+    <footer>
+    </footer>
+    </div>
 </body>
 </html>

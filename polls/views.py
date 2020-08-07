@@ -85,21 +85,12 @@ def profile(request):
 	context = {
 		'polls': polls,
 		'form': form,
-	}	
-
-	if request.method == 'POST':
-		form = UserForm(request.POST, instance=user)
-		if form.is_valid():
-			form.save()
-			return render(request, 'polls/profile.html', context)
-	else:
-		return render(request, 'polls/profile.html', context)
+	}
 	
 	return render(request, 'polls/profile.html', context)
 
 def edit_profile(request):
 	user = request.user
-	form = UserForm(instance=user)
 	if request.method == 'POST':
 		form = UserForm(request.POST, instance=user)
 		if form.is_valid():
@@ -107,6 +98,7 @@ def edit_profile(request):
 			return redirect(reverse('profile'))
 
 	else:
+		form = UserForm(instance=user)
 		context = {'form': form}
 		return render(request, 'polls/edit_profile.html', context)
 
