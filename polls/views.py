@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from .models import PollQuestion, PollOption, Tag, Comment
 from .forms import PollForm, PollQuestionForm, UserForm, CommentForm
 from django.forms import formset_factory, modelformset_factory, inlineformset_factory
@@ -67,8 +67,8 @@ def create_poll(request):
 				for option in options:		
 					option.question = question
 					option.save()
-				return redirect(reverse('all_poll'))
-
+				return redirect(reverse('poll_result', kwargs={'pk': question.id}))
+		
 		question_form = PollQuestionForm()
 		option_form = option_formset(queryset=PollOption.objects.none())
 		context = {
@@ -77,6 +77,15 @@ def create_poll(request):
 		}
 
 		return render(request, 'polls/poll_create.html', context)
+
+def delete_poll(request, pk):
+	question = get_object_or_404(PollQuestion , pk=pk)
+	if question.user == request.user:
+		
+		question.delete()
+		return redirect('profile')
+	else:
+		return redirect('all_polls')
 
 def profile(request):
 	user = request.user

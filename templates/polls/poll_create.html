@@ -50,20 +50,20 @@
 		      <label for="id_form-1-option">Option 1</label>
 		      <input
 		        type="text"
+		        name="form-0-option"
+		        maxlength="200"
+		        id="id_form-0-option"
+		        class="input-box"
+		      /><input type="hidden" name="form-0-id" id="id_form-0-id" />
+
+		      <label for="id_form-2-option">Option 2</label>
+		      <input
+		        type="text"
 		        name="form-1-option"
 		        maxlength="200"
 		        id="id_form-1-option"
 		        class="input-box"
 		      /><input type="hidden" name="form-1-id" id="id_form-1-id" />
-
-		      <label for="id_form-2-option">Option 2</label>
-		      <input
-		        type="text"
-		        name="form-2-option"
-		        maxlength="200"
-		        id="id_form-2-option"
-		        class="input-box"
-		      /><input type="hidden" name="form-2-id" id="id_form-2-id" />
 		    </div>
 	    
 	    	<button type="button" id="add-btn" class="add-btn"><i class="fas fa-plus"></i></button>
@@ -80,13 +80,14 @@
 	let form = document.querySelector("#option-form");
 
 	let manageForm = document.getElementById("id_form-TOTAL_FORMS");
-	let formId = 3;
+	let formId = 2;
+	let id = formId + 1;
 
 	function handleAdd(e) { 
-		if (formId < 5) {
+		if (formId < 4) {
 	  		let label = document.createElement("label");
 	  		label.for = "id_form-" + formId + "-option";
-	  		label.innerHTML = "Option" + formId;
+	  		
 
 	  		let input = document.createElement("input");
 	  		input.type = "text";
@@ -107,10 +108,11 @@
 	  		form.appendChild(input1);
 
 	  		formId += 1;
+	  		label.innerHTML = "Option" + " " + formId;
 	  		manageForm.value += 1;
 
 	  		let icon = document.querySelector("#add-btn i")
-			if (formId >= 5) { add.style.visibility = "hidden"; }
+			if (formId >= 4) { add.style.visibility = "hidden"; }
 	  	};
 	}
 

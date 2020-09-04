@@ -27,7 +27,8 @@
 			<h3>Your Polls</h3>
 			{% for poll in polls %}
 				<div class="poll-container poll-container-expand">
-					<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.get_time_delta }} ago</p>
+					<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.get_time_delta }} ago 
+						&middot; <a href="{% url 'delete_poll' pk=poll.pk %}" class="link">delete</a></p>
 				    <p class="">{{poll.question}}</p>
 				    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
 					<!-- <ul>

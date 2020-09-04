@@ -36,17 +36,13 @@ body {
 
 /*BASE*/
 
-.main-container {
-  position: relative;
-  min-height: 100%;
-}
-
 .page-header {
   background-color: #fff;
   margin-bottom: 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 60px;
 }
 
 .page-header h1 {
@@ -79,13 +75,20 @@ body {
   background-color: #2e64fe;
 }
 
+main {
+  min-height: calc(100vh - 100px - 60px);
+}
+
 footer {
   position: absolute;
   width: 100%;
   background-color: #fff;
   height: 100px;
   margin-top: 50px;
+  text-align: center;
+  line-height: 100px;
 }
+
 
 /*POLL*/
 
@@ -117,6 +120,11 @@ footer {
 .title i:hover{
   color: #fff;
   background-color: #2e64fe;
+}
+
+.link {
+  color: #065fd4;
+  text-decoration: underline;
 }
 
 .poll {
@@ -219,20 +227,22 @@ footer {
   width: 15px;
   height: 15px;
   margin-right: 5px;
-  border-radius: 50px;
+  border-radius: 50%;
 }
 
 .radio-input label::after {
-  content: "";
+  content: "\2714";
   display: inline-block;
   position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #222;
+  width: 12px;
+  height: 17px;
+  padding-left: 5px;
+  background-color: #222;
+  color: #fff;
+  font-size: 11px;
   opacity: 0;
-  left: -1.7%;
-  top: 60%;
-  margin: -8px 20px;
+  left: 0.1%;
+  top: 26%;
   border-radius: 50%;
 
   transition: all 0.4s;
