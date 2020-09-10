@@ -8,22 +8,21 @@
         <p>Hello, <a href="{% url 'profile' %}" class="link">{{request.user.first_name }}</a></p>
         {% endif %}
         <h2>Latest polls</h2>
-        <p><a href="{% url 'create_poll' %}"><i class="fas fa-plus"></i></a></p>
+        <p class="tooltip">
+            <a href="{% url 'create_poll' %}"><i class="fas fa-plus"></i></a>
+            <span class="tooltip-text">Let's make a poll!</span>
+        </p>
     </div>
     <div class="poll">
-    {% for poll in all_polls %}
-        <div class="poll-container">
-            <div class="nav">
-                <div></div>
-                <div></div>
+        {% for poll in all_polls %}
+            <div class="poll-container">
+            	<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.date|timesince }} ago</p>
+            	<p class="poll-subject">{{ poll.question|truncatechars:75 }}</p>
+            	<p class="all-votes">{{ poll.get_total_vote }} vote</p>
+                <p>
+                	<a href="{% url 'poll_detail' pk=poll.pk %}" class="vote-now">VOTE ME</a>
+                </p>
             </div>
-        	<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.get_time_delta }} ago</p>
-        	<p class="poll-subject">{{ poll.get_question }}</p>
-        	<p class="all-votes">{{ poll.get_total_vote }} votes</p>
-            <p>
-            	<a href="{% url 'poll_detail' pk=poll.pk %}" class="vote-now">VOTE ME</a>
-            </p>
-        </div>
-    {% endfor %}
+        {% endfor %}
     </div>
 {% endblock %}

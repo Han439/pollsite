@@ -10,5 +10,7 @@ urlpatterns = [
 	path('profile/', views.profile, name='profile'),
 	path('profile/edit', views.edit_profile, name='edit_profile'),
 	path('delete_comment/<int:pk>/', views.delete_comment, name='delete_comment'),
-	path('edit_comment/<int:pk>/', views.edit_comment, name='edit_comment')
+	path('edit_comment/<int:pk>/', views.edit_comment, name='edit_comment'),
+
+	path('api/poll/<str:question>/', views.PollDetailAPI.as_view(), name='api_poll_detail')
 ]

@@ -6,13 +6,15 @@
 
 <form method="post">
 	{% csrf_token %}
-	<div class="form-layout">
-			<h2 class="form-title">Create an account</h2>
-			<div class="form form-layout form-container">
-				{{form}}
-			</div>
-			<input type="submit" value="submit" class="btn">
+	<div class="form form-layout form-container">
+		<h2 class="form-title">Create an account</h2>
+		<div class="input-container">
+			{{ form }}
 		</div>
+		<input type="submit" value="Register" class="btn">
+		<p class="register"><a href="{% url 'login' %}">Have an account already? Login</a></p>
+	</div>	
+	
 </form>
 
 {% endblock %}

@@ -5,15 +5,29 @@
 {% block content %}
 <div class="">
 	<div class="poll-container poll-container-expand">
-	<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.get_time_delta }} ago</p>
-    <p class="poll-subject">{{poll.question}}</p>
-    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
+		<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.date }}</p>
+	    <p class="poll-subject" data-poll-id="{{poll.id}}">{{poll.question}}</p>
+	    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
+		
+		{% for option in poll.polloption_set.all %}
+			<div class="radio-input check">
+				<div class="label">
+					<span class="result voted-result" style="width:{{option.get_percentage}}%"></span>
+					<span class="option">{{ option.option }}</span>
+					<span class="percentage">{{option.get_percentage}}%</span>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
 	<!-- <ul>
 		{% for tag in poll.tag.all %}
 		<li>{{ tag }}</li>
 		{% endfor %}
 	</ul> -->
-	<ul class="poll-result">
+
+
+
+	<!-- <ul class="poll-result">
 		{% for option in poll.polloption_set.all %}
 		<li class="poll-result-detail">
 			{{ option.option }}
@@ -22,7 +36,7 @@
 			<span>{{ option.get_percentage }} %</span>
 		</li>
 		{% endfor %}
-	</ul>
+	</ul> -->
 	<!-- <h4>Comments Section</h4>
 	{% if request.user.is_authenticated %}
 	<form method="POST">

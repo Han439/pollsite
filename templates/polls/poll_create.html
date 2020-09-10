@@ -8,111 +8,101 @@
 
 <form method="post">
 	{% csrf_token %}
-	<div class="form-layout">
+	<div class="create-form form-layout form-container">
+		<input
+		type="hidden"
+		name="form-TOTAL_FORMS"
+		value="2"
+		id="id_form-TOTAL_FORMS"/>
+
+		<input
+		type="hidden"
+		name="form-INITIAL_FORMS"
+		value="0"
+		id="id_form-INITIAL_FORMS"/>
+
+		<input
+		type="hidden"
+		name="form-MIN_NUM_FORMS"
+		value="0"
+		id="id_form-MIN_NUM_FORMS"/>
+
+		<input
+		type="hidden"
+		name="form-MAX_NUM_FORMS"
+		value="1000"
+		id="id_form-MAX_NUM_FORMS"/>
+
 		<h2 class="form-title">Make a poll</h2>
-		<div class="form question-form">
-	      <label for="id_question">Question</label>
-	      <input
-	        type="text"
-	        name="question"
-	        maxlength="250"
-	        required
-	        id="id_question"
-	        class="input-box"
-	      />
-	    </div>
-		
-	    <input
-	      type="hidden"
-	      name="form-TOTAL_FORMS"
-	      value="2"
-	      id="id_form-TOTAL_FORMS"
-	    /><input
-	      type="hidden"
-	      name="form-INITIAL_FORMS"
-	      value="0"
-	      id="id_form-INITIAL_FORMS"
-	    /><input
-	      type="hidden"
-	      name="form-MIN_NUM_FORMS"
-	      value="0"
-	      id="id_form-MIN_NUM_FORMS"
-	    /><input
-	      type="hidden"
-	      name="form-MAX_NUM_FORMS"
-	      value="1000"
-	      id="id_form-MAX_NUM_FORMS"
-	    />
-
-	    <div class="form-container option-form form-layout">
-
-		    <div id="option-form" class="form-layout">
-		      <label for="id_form-1-option">Option 1</label>
-		      <input
-		        type="text"
-		        name="form-0-option"
-		        maxlength="200"
-		        id="id_form-0-option"
-		        class="input-box"
-		      /><input type="hidden" name="form-0-id" id="id_form-0-id" />
-
-		      <label for="id_form-2-option">Option 2</label>
-		      <input
-		        type="text"
-		        name="form-1-option"
-		        maxlength="200"
-		        id="id_form-1-option"
-		        class="input-box"
-		      /><input type="hidden" name="form-1-id" id="id_form-1-id" />
-		    </div>
-	    
-	    	<button type="button" id="add-btn" class="add-btn"><i class="fas fa-plus"></i></button>
+		<div class="input-container">
+			<label for="id_question">Question</label>
+			<input
+				type="text"
+				name="question"
+				maxlength="250"
+				required
+				id="id_question"
+				class="input-box"
+				placeholder="Enter question"/>
 		</div>
-		<input type="submit" value="create" class="btn">
+		<div class="form-container option-form form-layout">
+
+		<div id="option-form" class="form-layout">
+			<label for="id_form-0-option">Option 1</label>
+			<input
+			type="text"
+			name="form-0-option"
+			maxlength="200"
+			id="id_form-0-option"
+			class="input-box"
+			/><input type="hidden" name="form-0-id" id="id_form-0-id" />
+
+			<label for="id_form-1-option">Option 2</label>
+			<input
+			type="text"
+			name="form-1-option"
+			maxlength="200"
+			id="id_form-1-option"
+			class="input-box"
+			/><input type="hidden" name="form-1-id" id="id_form-1-id" />
+		</div>
+
+		<button type="button" id="add-btn" class="add-btn"><i class="fas fa-plus"></i></button>
 	</div>
+		<input type="submit" value="Create" class="btn">
+	</div>	
 </form>
 
 <script type="text/javascript">
 
-	let add = document.querySelector("#add-btn");
-	add.addEventListener("click", handleAdd);
+	let add = $("#add-btn");
+	add.on("click", handleAdd);
 
-	let form = document.querySelector("#option-form");
+	let form = $("#option-form");
 
-	let manageForm = document.getElementById("id_form-TOTAL_FORMS");
-	let formId = 2;
-	let id = formId + 1;
+	let manageForm = $("#id_form-TOTAL_FORMS");
+	let inputId = 2;
+	let id = inputId + 1;
 
 	function handleAdd(e) { 
-		if (formId < 4) {
-	  		let label = document.createElement("label");
-	  		label.for = "id_form-" + formId + "-option";
-	  		
+		if (inputId < 4) {
 
-	  		let input = document.createElement("input");
-	  		input.type = "text";
-	  		input.name = "form-" + formId + "-option";
-	  		input.maxlength = "200";
-	  		input.id = "id_form-" + formId + "-option";
-	  		input.className = "input-box";
+			let content = `<label for="id_form-${inputId}-option">Option ${inputId + 1}</label>
+							<input
+								type="text"
+								name="form-${inputId}-option"
+								maxlength="200"
+								id="id_form-${inputId}-option"
+								class="input-box"/>
+							<input type="hidden" name="form-${inputId}-id" id="id_form-${inputId}-id" />`
 
-	  		let input1 = document.createElement("input");
-	  		input1.type = "hidden";
-	  		input1.name =  "form-" + formId + "-id";
-	  		input1.id = "id_form-" + formId + "-id";
+			form.append(content)
 
-	  		console.log(formId);
+	  		inputId += 1;
+	  		manageForm.val(String(inputId));
 
-	  		form.appendChild(label);
-	  		form.appendChild(input);
-	  		form.appendChild(input1);
-
-	  		formId += 1;
-	  		label.innerHTML = "Option" + " " + formId;
-	  		manageForm.value += 1;
-
-	  		let icon = document.querySelector("#add-btn i")
-			if (formId >= 4) { add.style.visibility = "hidden"; }
+	  		let icon = $("#add-btn i")
+			if (inputId >= 4) add.css("visibility","hidden") 
 	  	};
 	}
 
@@ -121,3 +111,6 @@
 </script>
 
 {% endblock %}
+
+
+

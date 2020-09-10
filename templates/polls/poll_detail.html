@@ -3,48 +3,135 @@
 {% block title %}{{poll.question}}{%endblock%}
 
 {% block content %}
-<div class="poll-container poll-container-expand">
-	<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.get_time_delta }} ago</p>
-    <p class="poll-subject">{{poll.question}}</p>
-    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
-	<!-- <ul>
-		{% for tag in poll.tag.all %}
-		<li>{{ tag }}</li>
-		{% endfor %}
-	</ul> -->
-	<form action="{% url 'poll_detail' pk=poll.pk %}" method="POST">
-		{% csrf_token %}
-		{% for option in poll.polloption_set.all %}
-			<p class="radio-input">
-				<input type="radio" name="option" value="{{ option.pk }}" id="option{{ forloop.counter }}">
-				<label for="option{{ forloop.counter }}"><span style="width: 30%">{{ option.option }}</span></label>
-			</p>
-		{% endfor %}
-		<input type="submit" value="Vote" class="vote-now">
-	</form>
-</div>
+	<div class="poll-container poll-container-expand">
+		<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.date }}</p>
+	    <p class="poll-subject" data-poll-id="{{poll.id}}">{{poll.question}}</p>
+	    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
+		<!-- <ul>
+			{% for tag in poll.tag.all %}
+			<li>{{ tag }}</li>
+			{% endfor %}
+		</ul> -->
+		<form action="{% url 'poll_detail' pk=poll.pk %}" method="POST">
+			{% for option in poll.polloption_set.all %}
+				<div class="radio-input">
+					<input type="radio" name="option" value="{{ option.pk }}" id="option{{ forloop.counter }}">
+					<label>
+						<span class="result"></span>
+						<span class="option">{{ option.option }}</span>
+						<span class="percentage"></span>
+					</label>
+				</div>
+			{% endfor %}
+			<!-- <input type="submit" value="Vote" class="vote-now"> -->
+		</form>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
 	<script type="text/javascript">
-		// const vote = document.querySelector('.vote-now');
-		// vote.addEventListener('click', (e) => {
-		// 	window.history.pushState('', '', '{% url "poll_detail" pk=poll.pk %}');
-		// });
+		let questionId = $(".poll-subject").data("poll-id")
+
+		let radio = $(".radio-input")
+
+		$.ajax({
+		    type:"get",
+		    url: `/api/poll/${questionId}/`,
+		    dataType:'json',
+		    success: function(data) {
+		        useReturnData(data);
+		    }
+		})
+
+		function useReturnData(data){
+		    let totalVote = 0;
+			for (i of data) totalVote += i.vote
+			data.push(totalVote)
+			//for (i of data) i.percentage = Number(((i.vote / data[2])*100).toFixed(2))
+			console.log(data)
+			radio.click(data, voteResult)
+		}
+
+		
+
+		function voteResult(e) {
+			//console.log($(this).find(".after").css("opacity", "1"))
+			$(radio).unbind()
+			let postData
+			e.data[e.data.length - 1] += 1
+			for (let i of e.data) {
+				if (i.option == this.innerText) {
+					i.vote += 1
+					postData = {...i}
+				}
+					
+				i.percentage = Number(((i.vote / e.data[e.data.length - 1])*100).toFixed(2))
+			}
+
+			for (let j = 0; j < radio.length; j++){
+				$(radio[j]).find(".result").width(JSON.stringify(e.data[j].percentage)+"%")
+			} 
+
+			$(this).removeClass('check')
+			$(this).addClass('checked')
+			// sibling input
+			let siblings = $(this).siblings(".radio-input")
+			siblings.removeClass('checked')
+			siblings.removeClass('check')
+			siblings.addClass('check')
+
+			// add percentage
+			let percentages = $(radio).find(".percentage")
+			for (let k = 0; k < percentages.length; k++) {
+				$(percentages[k]).html(e.data[k].percentage + "%")
+			}
+			
+			 console.log(e.data)
+
+			// mark browser voted
+			let val = $(this).find("input").val()
+			console.log(val)
 
 
-		// let label = document.querySelectorAll(".radio-input label");
+			// send data back to server
+			$.ajax({
+			    type:"put",
+			    url: `/api/poll/${questionId}/`,
+			    dataType:'json',
+			    headers: {
+					'Content-type': 'application/json',
+					'X-CSRFToken': csrftoken,
+					'Accept': 'application/json; indent=4',
+				},
+			    data: JSON.stringify(postData),
+			    success: function(response) {
+			        console.log(response);
+			        if (response.is_anonymous){
+			        	Cookies.set('voted', String(val), { expires: 1000,path: '' })
+			        }
+			    }
+			})
+		}
 
-		// for (let i = 0; i < label.length; i++) {
-		//   label[i].addEventListener("click", handleVote);
-		// }
 
-		// let span = document.querySelectorAll(".radio-input span");
-		// let radio = document.querySelectorAll(".radio-input input[type=radio]");
-
-		// function handleVote(e) {
-		//   for (let i = 0; i < span.length; i++) {
-		//     span[i].className = "vote-result";
-		//   }
-		// }
+		function getCookie(name) {
+		    let cookieValue = null;
+		    if (document.cookie && document.cookie !== '') {
+		        const cookies = document.cookie.split(';');
+		        for (let i = 0; i < cookies.length; i++) {
+		            const cookie = cookies[i].trim();
+		            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+		const csrftoken = getCookie('csrftoken');
 
 	</script>
 
 {% endblock content %}
+
+	

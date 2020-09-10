@@ -13,13 +13,18 @@
 
 <form method="post" action="{% url 'login' %}">
 	{% csrf_token %}
-	<div class="form-layout">
-		<h2 class="form-title">Login</h2>
-		<div class="form form-layout form-container">
-			{{form}}
+	<div class="form form-layout form-container">
+		<h2 class="form-title">Welcom Back!</h2>
+		<div class="input-container">
+			<label for="id_username">Email</label>
+			<input type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="254" required="" id="id_username" placeholder="Enter your email">
+			<label for="id_password">Password</label>
+			<input type="password" name="password" autocomplete="current-password" required="" id="id_password"
+			placeholder="Enter password">
 		</div>
-		<input type="submit" value="login" class="btn">
-	</div>
+		<input type="submit" value="Login" class="btn">
+		<p class="register"><a href="{% url 'registration' %}">Don't have an account yet? Register now</a></p>
+	</div>	
 	
 	<input type="hidden" name="next" value="{{ next }}">
 </form>

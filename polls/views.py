@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .models import PollQuestion, PollOption, Tag, Comment
+from .models import PollQuestion, PollOption, Tag, Comment, VoteEntry
 from .forms import PollForm, PollQuestionForm, UserForm, CommentForm
 from django.forms import formset_factory, modelformset_factory, inlineformset_factory
+
+from .serializers import PollOptionSerializer
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 # Create your views here.
@@ -11,22 +16,44 @@ def poll(request):
 	return render(request, 'polls/poll.html', {'all_polls': all_polls})
 
 def poll_detail(request, pk):
-	poll = PollQuestion.objects.get(pk=pk)
-
-	if request.method == 'POST': 
-		form = PollForm(request.POST)
-		if form.is_valid():
-			for option in poll.polloption_set.all():
-				if form.cleaned_data['option'] == str(option.pk):
-					option.vote += 1
-					option.save()
-					return redirect('poll_result', pk=poll.pk)
-
-	form = PollForm
+	poll = get_object_or_404(PollQuestion, pk=pk)
 	context = {
 		'poll': poll, 
-		'form': form,
 	}
+
+	print(request.user == poll.user)
+	if request.user == poll.user:
+		return render(request, 'polls/poll_result.html', context)
+
+	if poll.close:
+		return render(request, 'polls/poll_result.html', context)
+
+	if request.user.is_anonymous:
+		# if users already voted this poll
+		if request.COOKIES.get('voted') is not None:
+			return render(request, 'polls/poll_result.html', context)
+	else:
+		try:
+			entry = get_object_or_404(VoteEntry, question=pk, user=request.user)
+			context = {
+				'poll': poll,
+				'entry': entry
+			}
+			return render(request, 'polls/poll_result.html', context)
+		except:
+			pass	
+
+	
+	# if request.method == 'POST': 
+	# 	form = PollForm(request.POST)
+	# 	if form.is_valid():
+	# 		for option in poll.polloption_set.all():
+	# 			if form.cleaned_data['option'] == str(option.pk):
+	# 				option.vote += 1
+	# 				option.save()
+	# 				return redirect('poll_result', pk=poll.pk)
+
+	
 	return render(request, 'polls/poll_detail.html', context)
 
 
@@ -138,6 +165,47 @@ def edit_comment(request, pk):
 			return render(request, 'polls/edit_comment.html', context)
 
 	return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
+
+
+# API Views
+
+class PollDetailAPI(APIView):
+
+	def get(self, request, question, format=None):
+		print(request.user.id)
+		options = PollOption.objects.filter(question=question)
+		serializer = PollOptionSerializer(options, many=True)
+		response = Response(serializer.data)
+		return response
+
+	def put(self, request, question, format=None):
+		optionId = request.data.get('id')
+		
+		option = get_object_or_404(PollOption, id=optionId)
+		question = get_object_or_404(PollQuestion, id=question)
+		serializer = PollOptionSerializer(option, data=request.data)
+
+		# set up vote entry
+		if serializer.is_valid():
+			serializer.save()
+			
+			data = serializer.data
+			# mark poll voted by this browser
+			if request.user.is_anonymous:
+				data={'is_anonymous': True}
+				data.update(serializer.data)
+			else:
+				try:
+					entry = VoteEntry.objects.get_or_create(question=question, voted_option=option, user=request.user)
+					entry.save()
+					print(entry)
+				except:
+					pass
+			return Response(data)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 # def update_poll(request, pk):
 # 	question = PollQuestion.objects.get(id=pk)

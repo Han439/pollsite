@@ -16,9 +16,11 @@ class Tag(models.Model):
 
 class PollQuestion(models.Model):
 	question = models.CharField(max_length=250,null=True)
-	user = models.ForeignKey(MyUser, null=True,on_delete=models.SET_NULL)
+	user = models.ForeignKey(MyUser, null=True,on_delete=models.SET_NULL, blank=True)
 	tag = models.ManyToManyField(Tag, blank=True)
 	date = models.DateTimeField(default=timezone.now, null=True)
+	close = models.BooleanField(default=False, null=True)
+	# entry = models.ManyToManyField(MyUser, blank=True)
 
 	def __str__(self):
 		return self.question
@@ -68,10 +70,15 @@ class VoteEntry(models.Model):
 	question = models.ForeignKey(PollQuestion, on_delete=models.CASCADE)
 	voted_option = models.ForeignKey(PollOption, on_delete=models.CASCADE)
 	user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-	voted_date = models.DateTimeField(default=timezone.now)
+	voted_date = models.DateTimeField(auto_now_add=True)
+	voted_modified_date = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return self.user.email
 
 class Comment(models.Model):
 	comment = models.TextField(blank=True, null=True)
 	question = models.ForeignKey(PollQuestion, on_delete=models.CASCADE	)
 	user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 	date = models.DateTimeField(default=timezone.now)
+	last_modified = models.DateTimeField(auto_now=True)
