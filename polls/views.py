@@ -3,10 +3,15 @@ from .models import PollQuestion, PollOption, Tag, Comment, VoteEntry
 from .forms import PollForm, PollQuestionForm, UserForm, CommentForm
 from django.forms import formset_factory, modelformset_factory, inlineformset_factory
 
-from .serializers import PollOptionSerializer
+from django.http import Http404
+from django.contrib.auth.decorators import login_required
+
+from .serializers import PollOptionSerializer, PollQuestionSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
+
 
 
 # Create your views here.
@@ -30,7 +35,7 @@ def poll_detail(request, pk):
 
 	if request.user.is_anonymous:
 		# if users already voted this poll
-		if request.COOKIES.get('voted') is not None:
+		if request.COOKIES.get('poll_%s'%pk) is not None:
 			return render(request, 'polls/poll_result.html', context)
 	else:
 		try:
@@ -43,31 +48,20 @@ def poll_detail(request, pk):
 		except:
 			pass	
 
-	
-	# if request.method == 'POST': 
-	# 	form = PollForm(request.POST)
-	# 	if form.is_valid():
-	# 		for option in poll.polloption_set.all():
-	# 			if form.cleaned_data['option'] == str(option.pk):
-	# 				option.vote += 1
-	# 				option.save()
-	# 				return redirect('poll_result', pk=poll.pk)
-
-	
 	return render(request, 'polls/poll_detail.html', context)
 
 
 def poll_result(request, pk):
 	poll = PollQuestion.objects.get(pk=pk)
 	comments = Comment.objects.filter(question=poll).order_by('-date')
-	if request.method == 'POST':
-		form = CommentForm(request.POST)
-		if form.is_valid():
-			comment = form.save(commit=False)
-			comment.question = poll
-			comment.user = request.user
-			comment.save()
-			return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
+	# if request.method == 'POST':
+	# 	form = CommentForm(request.POST)
+	# 	if form.is_valid():
+	# 		comment = form.save(commit=False)
+	# 		comment.question = poll
+	# 		comment.user = request.user
+	# 		comment.save()
+	# 		return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
 	form = CommentForm()
 	context = {
 		'poll': poll,
@@ -78,42 +72,32 @@ def poll_result(request, pk):
 
 
 def create_poll(request):
-	if not request.user.is_authenticated:
-		return redirect(reverse("login"))
-	else:
-		option_formset = modelformset_factory(PollOption, fields=('option',), extra=2)
+	option_formset = modelformset_factory(PollOption, fields=('option',), extra=2)
 
-		if request.method == 'POST':
-			question_form = PollQuestionForm(request.POST)
-			option_form = option_formset(request.POST)
-			if question_form.is_valid() and option_form.is_valid():
-				question = question_form.save(commit=False)
+	if request.method == 'POST':
+		question_form = PollQuestionForm(request.POST)
+		option_form = option_formset(request.POST)
+		if question_form.is_valid() and option_form.is_valid():
+			question = question_form.save(commit=False)
+			if request.user.is_authenticated:
 				question.user = request.user
-				question.save()
-				options = option_form.save(commit=False)
-				for option in options:		
-					option.question = question
-					option.save()
-				return redirect(reverse('poll_result', kwargs={'pk': question.id}))
-		
-		question_form = PollQuestionForm()
-		option_form = option_formset(queryset=PollOption.objects.none())
-		context = {
-			'question_form': question_form,
-			'option_form': option_form,
-		}
+			question.save()
+			options = option_form.save(commit=False)
+			for option in options:		
+				option.question = question
+				option.save()
+			return redirect(reverse('poll_result', kwargs={'pk': question.id}))
+	
+	question_form = PollQuestionForm()
+	option_form = option_formset(queryset=PollOption.objects.none())
+	context = {
+		'question_form': question_form,
+		'option_form': option_form,
+	}
 
-		return render(request, 'polls/poll_create.html', context)
+	return render(request, 'polls/poll_create.html', context)
 
-def delete_poll(request, pk):
-	question = get_object_or_404(PollQuestion , pk=pk)
-	if question.user == request.user:
-		
-		question.delete()
-		return redirect('profile')
-	else:
-		return redirect('all_polls')
-
+@login_required
 def profile(request):
 	user = request.user
 	form = UserForm(instance=user)
@@ -125,6 +109,7 @@ def profile(request):
 	
 	return render(request, 'polls/profile.html', context)
 
+@login_required
 def edit_profile(request):
 	user = request.user
 	if request.method == 'POST':
@@ -172,59 +157,66 @@ def edit_comment(request, pk):
 class PollDetailAPI(APIView):
 
 	def get(self, request, question, format=None):
-		print(request.user.id)
 		options = PollOption.objects.filter(question=question)
 		serializer = PollOptionSerializer(options, many=True)
 		response = Response(serializer.data)
 		return response
 
 	def put(self, request, question, format=None):
-		optionId = request.data.get('id')
-		
-		option = get_object_or_404(PollOption, id=optionId)
-		question = get_object_or_404(PollQuestion, id=question)
-		serializer = PollOptionSerializer(option, data=request.data)
+		questionObj = get_object_or_404(PollQuestion, id=question)
 
-		# set up vote entry
+		requestData = request.data
+		option = get_object_or_404(PollOption, id=requestData['id'], 
+			question=requestData['question'], option=requestData['option'])
+
+		serializer = PollOptionSerializer(option)
+		data = serializer.data
+
+		# mark poll voted by this browser
+		if request.user.is_anonymous:
+			# request.session.set_expiry(60*60*24*360)
+			option.vote += 1
+			option.save()
+			data={'is_anonymous': True}
+			data.update(serializer.data)
+		else:
+			# set up vote entry	
+			try:
+				entry, created = VoteEntry.objects.get_or_create(question=questionObj, 
+					user=request.user, voted_option=option)
+				if created:
+					# update the vote to database if user haven't voted yet
+					option.vote += 1
+					option.save()
+					serializer = PollOptionSerializer(option)
+					data = serializer.data
+			except Exception as e:
+				print(e)
+
+		return Response(data)
+
+
+class PollQuestionAPI(APIView):
+
+	def put(self, request, question, format=None):
+		
+		question = get_object_or_404(PollQuestion, id=question)
+		serializer = PollQuestionSerializer(question, data=request.data)
+		
 		if serializer.is_valid():
-			serializer.save()
-			
-			data = serializer.data
-			# mark poll voted by this browser
-			if request.user.is_anonymous:
-				data={'is_anonymous': True}
-				data.update(serializer.data)
+			if request.user == question.user:
+				serializer.save()
+				data = serializer.data
+				return Response(data)
 			else:
-				try:
-					entry = VoteEntry.objects.get_or_create(question=question, voted_option=option, user=request.user)
-					entry.save()
-					print(entry)
-				except:
-					pass
-			return Response(data)
+				return Response({'error': 'You must be the owner of this poll to edit it.'})
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-# def update_poll(request, pk):
-# 	question = PollQuestion.objects.get(id=pk)
-# 	option_formset = inlineformset_factory(PollQuestion, PollOption, fields=('option',), extra=3)
-
-# 	if request.method == 'POST':
-# 		question_form = PollQuestionForm(request.POST, instance=question)
-# 		option_form = option_formset(request.POST, instance=question)
-# 		if question_form.is_valid() and option_form.is_valid():
-# 			question_form.save()
-# 			option_form.save()
-# 			return redirect(reverse('all_poll'))
-
-# 	question_form = PollQuestionForm(instance=question)
-# 	option_form = option_formset(instance=question)
-# 	context = {
-# 		'question_form': question_form,
-# 		'option_form': option_form,
-# 	}
-
-# 	return render(request, 'polls/poll_update.html', context)
+	def delete(self, request, question, format=None):
+		question = get_object_or_404(PollQuestion, id=question)
+		if request.user == question.user:
+			question.delete()
+		else:
+			return Response({'error': 'You must be the owner of this poll to edit it.'})
+		return Response(status=status.HTTP_204_NO_CONTENT)
 

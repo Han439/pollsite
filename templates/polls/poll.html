@@ -16,7 +16,11 @@
     <div class="poll">
         {% for poll in all_polls %}
             <div class="poll-container">
-            	<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.date|timesince }} ago</p>
+                {% if poll.user %}
+                <p class="user-info">{{poll.user.first_name}} &middot; {{ poll.date|timesince }} ago</p>
+                {% else %}
+                <p class="user-info">Anonymous &middot; {{ poll.date|timesince }} ago</p>
+                {% endif %}
             	<p class="poll-subject">{{ poll.question|truncatechars:75 }}</p>
             	<p class="all-votes">{{ poll.get_total_vote }} vote</p>
                 <p>

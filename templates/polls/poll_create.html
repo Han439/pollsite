@@ -9,7 +9,7 @@
 <form method="post">
 	{% csrf_token %}
 	<div class="create-form form-layout form-container">
-		<input
+		<!-- <input
 		type="hidden"
 		name="form-TOTAL_FORMS"
 		value="2"
@@ -31,7 +31,9 @@
 		type="hidden"
 		name="form-MAX_NUM_FORMS"
 		value="1000"
-		id="id_form-MAX_NUM_FORMS"/>
+		id="id_form-MAX_NUM_FORMS"/> -->
+
+		{{ option_form.management_form }}
 
 		<h2 class="form-title">Make a poll</h2>
 		<div class="input-container">
@@ -55,6 +57,7 @@
 			maxlength="200"
 			id="id_form-0-option"
 			class="input-box"
+			required
 			/><input type="hidden" name="form-0-id" id="id_form-0-id" />
 
 			<label for="id_form-1-option">Option 2</label>

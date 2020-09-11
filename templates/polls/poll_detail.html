@@ -4,14 +4,14 @@
 
 {% block content %}
 	<div class="poll-container poll-container-expand">
-		<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.date }}</p>
+		{% if poll.user %}
+	    <p class="user-info">{{poll.user.first_name}} &middot; {{ poll.date }}</p>
+	    {% else %}
+	    <p class="user-info">Anonymous &middot; {{ poll.date }}</p>
+	    {% endif %}
 	    <p class="poll-subject" data-poll-id="{{poll.id}}">{{poll.question}}</p>
 	    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
-		<!-- <ul>
-			{% for tag in poll.tag.all %}
-			<li>{{ tag }}</li>
-			{% endfor %}
-		</ul> -->
+		
 		<form action="{% url 'poll_detail' pk=poll.pk %}" method="POST">
 			{% for option in poll.polloption_set.all %}
 				<div class="radio-input">
@@ -60,8 +60,8 @@
 			e.data[e.data.length - 1] += 1
 			for (let i of e.data) {
 				if (i.option == this.innerText) {
-					i.vote += 1
 					postData = {...i}
+					i.vote += 1
 				}
 					
 				i.percentage = Number(((i.vote / e.data[e.data.length - 1])*100).toFixed(2))
@@ -106,7 +106,7 @@
 			    success: function(response) {
 			        console.log(response);
 			        if (response.is_anonymous){
-			        	Cookies.set('voted', String(val), { expires: 1000,path: '' })
+			        	Cookies.set(`poll_${questionId}`, String(val), { expires: 1000,path: '' })
 			        }
 			    }
 			})

@@ -68,7 +68,7 @@ class PollOption(models.Model):
 
 class VoteEntry(models.Model):
 	question = models.ForeignKey(PollQuestion, on_delete=models.CASCADE)
-	voted_option = models.ForeignKey(PollOption, on_delete=models.CASCADE)
+	voted_option = models.ForeignKey(PollOption, on_delete=models.CASCADE, blank=True, null=True)
 	user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 	voted_date = models.DateTimeField(auto_now_add=True)
 	voted_modified_date = models.DateTimeField(auto_now=True)

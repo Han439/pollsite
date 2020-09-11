@@ -5,7 +5,11 @@
 {% block content %}
 <div class="">
 	<div class="poll-container poll-container-expand">
-		<p class="user-info">{{poll.user.first_name}} &middot; {{ poll.date }}</p>
+		{% if poll.user %}
+        <p class="user-info">{{poll.user.first_name}} &middot; {{ poll.date }}</p>
+        {% else %}
+        <p class="user-info">Anonymous &middot; {{ poll.date }}</p>
+        {% endif %}
 	    <p class="poll-subject" data-poll-id="{{poll.id}}">{{poll.question}}</p>
 	    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
 		

@@ -9,7 +9,9 @@
 	<div class="form form-layout form-container">
 		<h2 class="form-title">Create an account</h2>
 		<div class="input-container">
+			{% csrf_token %}
 			{{ form }}
+			
 		</div>
 		<input type="submit" value="Register" class="btn">
 		<p class="register"><a href="{% url 'login' %}">Have an account already? Login</a></p>
