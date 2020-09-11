@@ -640,15 +640,21 @@ input[type="submit"] {
   display: none;
 }
 
+.validate {
+  border: 1px solid var(--error-color) !important;
+  margin-bottom: 0 !important;
+}
+
+.validate-text {
+  color: var(--error-color);
+  font-size: 0.8rem;
+}
+
 .question-form input {
   min-width: 700px;
   height: 40px;
   margin-bottom: 50px;
 }
-
-.form input:focus {
-/*  box-shadow: 0px 5px 15px #a8a8a8;
-*/}
 
 .option-form {
   width: 100%;

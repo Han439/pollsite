@@ -16,6 +16,7 @@ class Tag(models.Model):
 
 class PollQuestion(models.Model):
 	question = models.CharField(max_length=250,null=True)
+	# question_slug = models.SlugField(null=True, blank=True, max_length=250)
 	user = models.ForeignKey(MyUser, null=True,on_delete=models.SET_NULL, blank=True)
 	tag = models.ManyToManyField(Tag, blank=True)
 	date = models.DateTimeField(default=timezone.now, null=True)

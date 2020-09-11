@@ -24,7 +24,7 @@
             	<p class="poll-subject">{{ poll.question|truncatechars:75 }}</p>
             	<p class="all-votes">{{ poll.get_total_vote }} vote</p>
                 <p>
-                	<a href="{% url 'poll_detail' pk=poll.pk %}" class="vote-now">VOTE ME</a>
+                	<a href="{% url 'poll_detail' pk=poll.pk question=poll.question|slugify %}" class="vote-now">VOTE ME</a>
                 </p>
             </div>
         {% endfor %}

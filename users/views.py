@@ -26,7 +26,12 @@ def registration(request):
 
 class UserAPI(APIView):
 
-	def put(request):
+	def get(request, format=None):
+		users = MyUser.objects.all()
+		serializer = UserSerializer(users, many=True)
+		return Response(serializer.data)
+
+	def put(request, format=None):
 
 		if request.user.is_authenticated:
 			user = request.user

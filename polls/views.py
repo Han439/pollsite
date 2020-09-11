@@ -20,7 +20,7 @@ def poll(request):
 	all_polls = PollQuestion.objects.all().order_by("-date")
 	return render(request, 'polls/poll.html', {'all_polls': all_polls})
 
-def poll_detail(request, pk):
+def poll_detail(request, pk, question):
 	poll = get_object_or_404(PollQuestion, pk=pk)
 	context = {
 		'poll': poll, 
@@ -51,24 +51,24 @@ def poll_detail(request, pk):
 	return render(request, 'polls/poll_detail.html', context)
 
 
-def poll_result(request, pk):
-	poll = PollQuestion.objects.get(pk=pk)
-	comments = Comment.objects.filter(question=poll).order_by('-date')
-	# if request.method == 'POST':
-	# 	form = CommentForm(request.POST)
-	# 	if form.is_valid():
-	# 		comment = form.save(commit=False)
-	# 		comment.question = poll
-	# 		comment.user = request.user
-	# 		comment.save()
-	# 		return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
-	form = CommentForm()
-	context = {
-		'poll': poll,
-		'form': form,
-		'comments': comments, 
-	}
-	return render(request, 'polls/poll_result.html', context)
+# def poll_result(request, pk):
+# 	poll = PollQuestion.objects.get(pk=pk)
+# 	comments = Comment.objects.filter(question=poll).order_by('-date')
+# 	# if request.method == 'POST':
+# 	# 	form = CommentForm(request.POST)
+# 	# 	if form.is_valid():
+# 	# 		comment = form.save(commit=False)
+# 	# 		comment.question = poll
+# 	# 		comment.user = request.user
+# 	# 		comment.save()
+# 	# 		return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
+# 	form = CommentForm()
+# 	context = {
+# 		'poll': poll,
+# 		'form': form,
+# 		'comments': comments, 
+# 	}
+# 	return render(request, 'polls/poll_result.html', context)
 
 
 def create_poll(request):
