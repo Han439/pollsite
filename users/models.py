@@ -14,6 +14,8 @@ class MyUser(AbstractUser):
             'unique': _("A user with that username already exists."),
         },)
 
+	# location = models.CharField(max_length=100, blank=True, null=True)
+
 	USERNAME_FIELD = 'email'
 	REQUIRED_FIELDS = []
 
