@@ -14,6 +14,7 @@
         </p>
     </div>
     <div class="poll">
+        {% if all_polls %}
         {% for poll in all_polls %}
             <div class="poll-container">
                 {% if poll.user %}
@@ -28,5 +29,10 @@
                 </p>
             </div>
         {% endfor %}
+        {% else %}
+        <div class="no-poll">
+                <p>You have no polls, <a href="{% url 'create_poll' %}">let's make one &#x2192;</a></p>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
