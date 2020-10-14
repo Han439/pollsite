@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PollQuestion, PollOption, Tag, VoteEntry, Comment
+from .models import PollQuestion, PollOption, VoteEntry
 
 # Register your models here.
 #admin.site.register(PollQuestion)
@@ -14,13 +14,9 @@ class PollOptionAdmin(admin.ModelAdmin):
 class PollOptionInline(admin.TabularInline):
 	model = PollOption
 
-class TagInline(admin.StackedInline):
-	model = Tag
 
 @admin.register(PollQuestion)
 class PollQuestion(admin.ModelAdmin):
 	inlines = [PollOptionInline]
 
-admin.site.register(Tag)
 admin.site.register(VoteEntry)
-admin.site.register(Comment)

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .models import PollQuestion, PollOption, Tag, Comment, VoteEntry
-from .forms import PollForm, PollQuestionForm, UserForm, CommentForm
+from .models import PollQuestion, PollOption, VoteEntry
+from .forms import PollForm, PollQuestionForm, UserForm
 from django.forms import formset_factory, modelformset_factory, inlineformset_factory
 
 from django.http import Http404
@@ -19,6 +19,7 @@ from rest_framework import status
 def poll(request):
 	all_polls = PollQuestion.objects.all().order_by("-date")
 	return render(request, 'polls/poll.html', {'all_polls': all_polls})
+
 
 def poll_detail(request, pk, question):
 	poll = get_object_or_404(PollQuestion, pk=pk)
@@ -51,47 +52,33 @@ def poll_detail(request, pk, question):
 	return render(request, 'polls/poll_detail.html', context)
 
 
-# def poll_result(request, pk):
-# 	poll = PollQuestion.objects.get(pk=pk)
-# 	comments = Comment.objects.filter(question=poll).order_by('-date')
-# 	# if request.method == 'POST':
-# 	# 	form = CommentForm(request.POST)
-# 	# 	if form.is_valid():
-# 	# 		comment = form.save(commit=False)
-# 	# 		comment.question = poll
-# 	# 		comment.user = request.user
-# 	# 		comment.save()
-# 	# 		return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
-# 	form = CommentForm()
-# 	context = {
-# 		'poll': poll,
-# 		'form': form,
-# 		'comments': comments, 
-# 	}
-# 	return render(request, 'polls/poll_result.html', context)
-
-
 def create_poll(request):
 	option_formset = modelformset_factory(PollOption, fields=('option',), extra=2)
 
 	if request.method == 'POST':
 		question_form = PollQuestionForm(request.POST)
 		option_form = option_formset(request.POST)
+
 		if question_form.is_valid() and option_form.is_valid():
 			question = question_form.save(commit=False)
+
 			if request.user.is_authenticated:
 				question.user = request.user
+
 			question.save()
 			options = option_form.save(commit=False)
+
 			for option in options:		
 				option.question = question
 				option.save()
-			return redirect(reverse('poll_detail', 
+
+			return redirect(reverse('poll_detail',
 				kwargs={'pk': question.id,
 			 			'question': question.get_question_slug()}))
 	
 	question_form = PollQuestionForm()
 	option_form = option_formset(queryset=PollOption.objects.none())
+
 	context = {
 		'question_form': question_form,
 		'option_form': option_form,
@@ -125,33 +112,6 @@ def edit_profile(request):
 		context = {'form': form}
 		return render(request, 'polls/edit_profile.html', context)
 
-# def delete_comment(request, pk):
-# 	comment = Comment.objects.get(id=pk)
-# 	poll = comment.question
-# 	if request.user == comment.user:
-# 		comment.delete()
-
-# 	return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
-
-# def edit_comment(request, pk):
-# 	comment = Comment.objects.get(id=pk)
-# 	poll = comment.question
-# 	if request.user == comment.user:
-# 		if request.method == 'POST':
-# 			form = CommentForm(request.POST, instance=comment)
-# 			if form.is_valid():
-# 				form.save()
-# 				return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
-
-# 		else:
-# 			form = CommentForm(instance=comment)
-# 			context = {
-# 				'form': form
-# 			}
-
-# 			return render(request, 'polls/edit_comment.html', context)
-
-# 	return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
 
 
 # API Views

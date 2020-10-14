@@ -8,20 +8,12 @@ from django.db.models import Sum
 
 # Create your models here.
 
-class Tag(models.Model):
-	tag = models.CharField(max_length=50, default="")
-
-	def __str__(self):
-		return self.tag
 
 class PollQuestion(models.Model):
 	question = models.CharField(max_length=250,null=True)
-	# question_slug = models.SlugField(null=True, blank=True, max_length=250)
 	user = models.ForeignKey(MyUser, null=True,on_delete=models.SET_NULL, blank=True)
-	tag = models.ManyToManyField(Tag, blank=True)
 	date = models.DateTimeField(default=timezone.now, null=True)
 	close = models.BooleanField(default=False, null=True)
-	# entry = models.ManyToManyField(MyUser, blank=True)
 
 	def __str__(self):
 		return self.question
@@ -32,18 +24,6 @@ class PollQuestion(models.Model):
 	def get_total_vote(self):
 		return self.polloption_set.aggregate(Sum('vote'))['vote__sum']
 
-	def get_time_delta(self):
-		time = (timezone.now() - self.date)
-		hours = time.seconds // 3600
-		minute = (time.seconds // 60) % 60
-		if time.days > 0:
-			return str(time.days) + " days"
-		elif hours > 0:
-			return str(hours) + " hours"
-		elif minute > 0:
-			return str(minute) + " minutes"
-		else:
-			return str(time.seconds) + " seconds"
 
 class PollOption(models.Model):
 	question = models.ForeignKey(PollQuestion, on_delete=models.CASCADE)
@@ -60,6 +40,7 @@ class PollOption(models.Model):
 		else:
 			return 0
 
+
 class VoteEntry(models.Model):
 	question = models.ForeignKey(PollQuestion, on_delete=models.CASCADE)
 	voted_option = models.ForeignKey(PollOption, on_delete=models.CASCADE, blank=True, null=True)
@@ -69,10 +50,3 @@ class VoteEntry(models.Model):
 
 	def __str__(self):
 		return self.user.email
-
-class Comment(models.Model):
-	comment = models.TextField(blank=True, null=True)
-	question = models.ForeignKey(PollQuestion, on_delete=models.CASCADE	)
-	user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-	date = models.DateTimeField(default=timezone.now)
-	last_modified = models.DateTimeField(auto_now=True)

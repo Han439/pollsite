@@ -1,5 +1,5 @@
 from django import forms
-from .models import PollOption, PollQuestion, Tag, Comment
+from .models import PollOption, PollQuestion
 from django.contrib.auth.models import User
 
 
@@ -18,9 +18,4 @@ class UserForm(forms.ModelForm):
 		model = User
 		fields = ('first_name', 'last_name')
 
-class CommentForm(forms.ModelForm):
-
-	class Meta:
-		model = Comment
-		fields = ('comment',)
 
