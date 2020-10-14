@@ -29,7 +29,7 @@ SECRET_KEY = 'bpoiaocp1)7+aiafk6nrlm%!8jz#k-k3rn93bkh+a0%m#b5t%='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['pollsiteapp.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
