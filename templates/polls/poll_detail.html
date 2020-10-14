@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{poll.question}}{%endblock%}
+{% block title %}{{poll.question}}{% endblock %}
 
 {% block content %}
 	<div class="poll-container poll-container-expand">
@@ -12,7 +12,7 @@
 	    <p class="poll-subject" data-poll-id="{{poll.id}}">{{poll.question}}</p>
 	    <p class="all-votes">{{ poll.get_total_vote }} votes</p>
 		
-		<form action="{% url 'poll_detail' pk=poll.pk %}" method="POST">
+		<form method="POST">
 			{% for option in poll.polloption_set.all %}
 				<div class="radio-input">
 					<input type="radio" name="option" value="{{ option.pk }}" id="option{{ forloop.counter }}">

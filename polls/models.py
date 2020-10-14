@@ -26,11 +26,8 @@ class PollQuestion(models.Model):
 	def __str__(self):
 		return self.question
 
-	def get_question(self):
-		if len(self.question) > 80:
-			return self.question[:81] + "..."
-		else:
-			return self.question
+	def get_question_slug(self):
+		return (self.question).lower().replace(' ', '-')
 
 	def get_total_vote(self):
 		return self.polloption_set.aggregate(Sum('vote'))['vote__sum']
@@ -47,10 +44,6 @@ class PollQuestion(models.Model):
 			return str(minute) + " minutes"
 		else:
 			return str(time.seconds) + " seconds"
-
-	def get_absolute_url(self):
-		"""Returns the url to access a particular instance of the model."""
-		return reverse('poll_detail', args=[str(self.id)])  # reverse the url mapping from name --> view --> url
 
 class PollOption(models.Model):
 	question = models.ForeignKey(PollQuestion, on_delete=models.CASCADE)

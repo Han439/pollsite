@@ -4,20 +4,23 @@
 
 {% block content %}
 <div class="profile-layout">
-	<div class="profile form-container user-layout">
-		<div>
-			<h3>Your Profile</h3>
-			<p><i class="fas fa-user-circle"></i></p>
-			<p class="email">{{request.user.email}}</p>
-		</div>
+<!-- 	<div class="profile-container">
+ -->	<div class="profile form-container user-layout">
+			<div>
+				<h3>Your Profile</h3>
+				<p><i class="fas fa-user-circle"></i></p>
+				<p class="email">{{request.user.email}}</p>
+			</div>
 
-		<div class="detail">
-			<p>{{request.user.first_name}}</p>
-			<p>{{request.user.last_name}}</p>
-			<p><i class="far fa-calendar-check"></i> {{request.user.date_joined}}</p>
+			<div class="detail">
+				<p>{{request.user.first_name}}</p>
+				<p>{{request.user.last_name}}</p>
+				<p><i class="far fa-calendar-check"></i> {{request.user.date_joined}}</p>
+			</div>
+			<div><a href="{% url 'edit_profile' %}" class="btn">Edit</a></div>
 		</div>
-		<div><a href="{% url 'edit_profile' %}" class="btn">Edit</a></div>
-	</div>
+<!-- 	</div>
+ -->	
 	<div class="my-poll">
 		<h3>Your Polls</h3>
 		{% if polls %}

@@ -86,7 +86,9 @@ def create_poll(request):
 			for option in options:		
 				option.question = question
 				option.save()
-			return redirect(reverse('poll_result', kwargs={'pk': question.id}))
+			return redirect(reverse('poll_detail', 
+				kwargs={'pk': question.id,
+			 			'question': question.get_question_slug()}))
 	
 	question_form = PollQuestionForm()
 	option_form = option_formset(queryset=PollOption.objects.none())
@@ -123,33 +125,33 @@ def edit_profile(request):
 		context = {'form': form}
 		return render(request, 'polls/edit_profile.html', context)
 
-def delete_comment(request, pk):
-	comment = Comment.objects.get(id=pk)
-	poll = comment.question
-	if request.user == comment.user:
-		comment.delete()
+# def delete_comment(request, pk):
+# 	comment = Comment.objects.get(id=pk)
+# 	poll = comment.question
+# 	if request.user == comment.user:
+# 		comment.delete()
 
-	return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
+# 	return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
 
-def edit_comment(request, pk):
-	comment = Comment.objects.get(id=pk)
-	poll = comment.question
-	if request.user == comment.user:
-		if request.method == 'POST':
-			form = CommentForm(request.POST, instance=comment)
-			if form.is_valid():
-				form.save()
-				return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
+# def edit_comment(request, pk):
+# 	comment = Comment.objects.get(id=pk)
+# 	poll = comment.question
+# 	if request.user == comment.user:
+# 		if request.method == 'POST':
+# 			form = CommentForm(request.POST, instance=comment)
+# 			if form.is_valid():
+# 				form.save()
+# 				return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
 
-		else:
-			form = CommentForm(instance=comment)
-			context = {
-				'form': form
-			}
+# 		else:
+# 			form = CommentForm(instance=comment)
+# 			context = {
+# 				'form': form
+# 			}
 
-			return render(request, 'polls/edit_comment.html', context)
+# 			return render(request, 'polls/edit_comment.html', context)
 
-	return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
+# 	return redirect(reverse('poll_result', kwargs={'pk': poll.id}))
 
 
 # API Views

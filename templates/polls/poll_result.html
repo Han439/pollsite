@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Result{% endblock %}
+{% block title %}{{poll.question}}{% endblock %}
 
 {% block content %}
 <div class="">
@@ -16,7 +16,11 @@
 		{% for option in poll.polloption_set.all %}
 			<div class="radio-input check">
 				<div class="label">
+					{% if entry.voted_option == option %}
+					<span class="result voted-result" style="width:{{option.get_percentage}}%;background-color: rgb(211, 223, 300);"></span>
+					{% else %}
 					<span class="result voted-result" style="width:{{option.get_percentage}}%"></span>
+					{% endif %}
 					<span class="option">{{ option.option }}</span>
 					<span class="percentage">{{option.get_percentage}}%</span>
 				</div>
