@@ -16,7 +16,10 @@
 	<div class="form form-layout form-container">
 		<h2 class="form-title">Welcom Back!</h2>
 		<div class="input-container">
-			{{ form }}
+			<label for="id_username">Email Address:</label>
+			<input type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="254" required="" id="id_username" value="hannfei99@gmail.com">
+			<label for="id_password">Password:</label>
+			<input type="password" name="password" autocomplete="current-password" required="" id="id_password" value="11111111">
 		</div>
 		<input type="submit" value="Login" class="btn">
 		<p class="register"><a href="{% url 'registration' %}">Don't have an account yet? Register now</a></p>
@@ -24,9 +27,5 @@
 	
 	<input type="hidden" name="next" value="{{ next }}">
 </form>
-
-<script type="text/javascript">
-	
-</script>
 
 {% endblock %}

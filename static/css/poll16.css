@@ -149,27 +149,6 @@ hr {
   font-weight: 700;
 }
 
-/*.auth {
-  display: flex;
-  justify-content: center;
-}
-
-.auth a {
-  display: inline-block;
-  margin: 10px 3px;
-  padding: 5px 10px;
-  border: 1px solid #2e64fe;
-  border-radius: 4px;
-  font-weight: 540;
-  font-size: 13px;
-  transition: all 0.3s; 
-}
-
-.auth a:hover {
-  color: #fff;
-  background-color: #2e64fe;
-}*/
-
 main {
   min-height: calc(100vh - 100px - 60px);
 }
@@ -177,7 +156,7 @@ main {
 footer {
   position: absolute;
   width: 100%;
-  background-color: #fff;
+  background-color: transparent;
   height: 100px;
   margin-top: 50px;
   text-align: center;

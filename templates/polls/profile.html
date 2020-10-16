@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}Profile{% endblock %}
 
 {% block content %}
@@ -55,71 +57,12 @@
 
 			{% endfor %}
 			{% else %}
-			<div class="no-poll">
-				<p>You have no polls, <a href="{% url 'create_poll' %}">let's make one &#x2192;</a></p>
-			</div>
+				<div class="no-poll">
+					<p>You have no polls, <a href="{% url 'create_poll' %}">let's make one &#x2192;</a></p>
+				</div>
 		{% endif %}
 	</div>
 </div>
 
-	<script type="text/javascript">
-		let close = $(".close-poll")
-
-		close.click(function(e) {
-			$(this).html("CLOSED").addClass("closed")
-			let questionId = $(this).parents(".poll-container").data("poll-id")
-			console.log(questionId)
-			$.ajax({
-			    type:"put",
-			    url: `/api/poll-question/${questionId}/`,
-			    dataType:'json',
-			    headers: {
-					'Content-type': 'application/json',
-					'X-CSRFToken': csrftoken,
-					'Accept': 'application/json; indent=4',
-				},
-			    data: JSON.stringify({close: true}),
-			    success: function(response) {
-			        console.log(response);
-			    }
-			})
-		})
-
-		let del = $(".delete")
-		del.click(function(e) {
-			let poll = $(this).closest(".poll-container")
-			poll.fadeOut(500)
-			let questionId = $(this).parents(".poll-container").data("poll-id")
-			$.ajax({
-			    type:"delete",
-			    url: `/api/poll-question/${questionId}/`,
-			    dataType:'json',
-			    headers: {
-					'Content-type': 'application/json',
-					'X-CSRFToken': csrftoken,
-					'Accept': 'application/json; indent=4',
-				},
-			    success: function(response) {
-			        console.log(response);
-			    }
-			})
-		})
-
-		function getCookie(name) {
-		    let cookieValue = null;
-		    if (document.cookie && document.cookie !== '') {
-		        const cookies = document.cookie.split(';');
-		        for (let i = 0; i < cookies.length; i++) {
-		            const cookie = cookies[i].trim();
-		            // Does this cookie string begin with the name we want?
-		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-		                break;
-		            }
-		        }
-		    }
-		    return cookieValue;
-		}
-		const csrftoken = getCookie('csrftoken');
-	</script>
+	<script src="{% static 'javascript/profile.js' %}"></script>
 {% endblock content %}

@@ -12,8 +12,11 @@
       integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="{% static 'css/poll16.css' %}">
+    <link rel="stylesheet" href="{% static 'css/poll18.css' %}">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+    <script src="{% static 'javascript/js-lib/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'javascript/js-lib/infinite.min.js' %}"></script>
 </head>
 <body>
     <header>
@@ -49,25 +52,11 @@
         {% block content %}
         {% endblock %}
 
-        <script type="text/javascript">
-            let user = $(".user-icon i")
-            let userAuth = $(".user-auth")
-
-            $(document).click(function(e) {
-                let target = $(e.target)
-                if(target.closest('.user-icon').length !== 0 ){
-                    userAuth.toggleClass("hidden")
-                    console.log(userAuth)
-                }
-                else if(!target.closest('.user-auth').length && userAuth.is(":visible")) {
-                    userAuth.addClass("hidden")
-                }
-            })
-        </script>
+        <script src="{% static 'javascript/base.js' %}"></script>
     </main>
     
     <footer>
-        <p>Copyright &copy; <script type="text/javascript">document.write(new Date().getFullYear());</script></p>
+        <!-- <p>Copyright &copy; <script type="text/javascript">document.write(new Date().getFullYear());</script></p> -->
     </footer>
     </div>
 </body>

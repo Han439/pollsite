@@ -1,5 +1,7 @@
 {% extends "base.html" %}	
 
+{% load static %}
+
 {% block title %}New Poll{% endblock %}
 
 {% block content %}
@@ -9,29 +11,6 @@
 <form method="post">
 	{% csrf_token %}
 	<div class="create-form form-layout form-container">
-		<!-- <input
-		type="hidden"
-		name="form-TOTAL_FORMS"
-		value="2"
-		id="id_form-TOTAL_FORMS"/>
-
-		<input
-		type="hidden"
-		name="form-INITIAL_FORMS"
-		value="0"
-		id="id_form-INITIAL_FORMS"/>
-
-		<input
-		type="hidden"
-		name="form-MIN_NUM_FORMS"
-		value="0"
-		id="id_form-MIN_NUM_FORMS"/>
-
-		<input
-		type="hidden"
-		name="form-MAX_NUM_FORMS"
-		value="1000"
-		id="id_form-MAX_NUM_FORMS"/> -->
 
 		{{ option_form.management_form }}
 
@@ -76,42 +55,7 @@
 	</div>	
 </form>
 
-<script type="text/javascript">
-
-	let add = $("#add-btn");
-	add.on("click", handleAdd);
-
-	let form = $("#option-form");
-
-	let manageForm = $("#id_form-TOTAL_FORMS");
-	let inputId = 2;
-	let id = inputId + 1;
-
-	function handleAdd(e) { 
-		if (inputId < 4) {
-
-			let content = `<label for="id_form-${inputId}-option">Option ${inputId + 1}</label>
-							<input
-								type="text"
-								name="form-${inputId}-option"
-								maxlength="200"
-								id="id_form-${inputId}-option"
-								class="input-box"/>
-							<input type="hidden" name="form-${inputId}-id" id="id_form-${inputId}-id" />`
-
-			form.append(content)
-
-	  		inputId += 1;
-	  		manageForm.val(String(inputId));
-
-	  		let icon = $("#add-btn i")
-			if (inputId >= 4) add.css("visibility","hidden") 
-	  	};
-	}
-
-	console.log(add)
-
-</script>
+<script src="{% static 'javascript/poll_create.js' %}"></script>
 
 {% endblock %}
 

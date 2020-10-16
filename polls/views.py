@@ -1,16 +1,18 @@
+
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .models import PollQuestion, PollOption, VoteEntry
-from .forms import PollForm, PollQuestionForm, UserForm
-from django.forms import formset_factory, modelformset_factory, inlineformset_factory
-
 from django.http import Http404
-from django.contrib.auth.decorators import login_required
-
-from .serializers import PollOptionSerializer, PollQuestionSerializer
+from django.forms import modelformset_factory
+from django.core.paginator import Paginator
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from .models import PollQuestion, PollOption, VoteEntry
+from .forms import PollForm, PollQuestionForm, UserForm
+from .serializers import PollOptionSerializer, PollQuestionSerializer
+
+
 
 
 
@@ -18,6 +20,12 @@ from rest_framework import status
 
 def poll(request):
 	all_polls = PollQuestion.objects.all().order_by("-date")
+	
+	paginator = Paginator(all_polls, 9)
+
+	page_number = request.GET.get('page')
+	all_polls = paginator.get_page(page_number)
+
 	return render(request, 'polls/poll.html', {'all_polls': all_polls})
 
 
@@ -34,20 +42,15 @@ def poll_detail(request, pk, question):
 	if poll.close:
 		return render(request, 'polls/poll_result.html', context)
 
-	if request.user.is_anonymous:
-		# if users already voted this poll
-		if request.COOKIES.get('poll_%s'%pk) is not None:
-			return render(request, 'polls/poll_result.html', context)
-	else:
-		try:
-			entry = get_object_or_404(VoteEntry, question=pk, user=request.user)
-			context = {
-				'poll': poll,
-				'entry': entry
-			}
-			return render(request, 'polls/poll_result.html', context)
-		except:
-			pass	
+	try:
+		entry = VoteEntry.objects.get(question=pk, user=request.user)
+		context = {
+			'poll': poll,
+			'entry': entry
+		}
+		return render(request, 'polls/poll_result.html', context)
+	except VoteEntry.DoesNotExist:
+		entry = None	
 
 	return render(request, 'polls/poll_detail.html', context)
 
@@ -61,11 +64,9 @@ def create_poll(request):
 
 		if question_form.is_valid() and option_form.is_valid():
 			question = question_form.save(commit=False)
-
-			if request.user.is_authenticated:
-				question.user = request.user
-
+			question.user = request.user
 			question.save()
+
 			options = option_form.save(commit=False)
 
 			for option in options:		
@@ -85,8 +86,8 @@ def create_poll(request):
 	}
 
 	return render(request, 'polls/poll_create.html', context)
+	
 
-@login_required
 def profile(request):
 	user = request.user
 	form = UserForm(instance=user)
@@ -98,19 +99,19 @@ def profile(request):
 	
 	return render(request, 'polls/profile.html', context)
 
-@login_required
+
 def edit_profile(request):
 	user = request.user
+
 	if request.method == 'POST':
 		form = UserForm(request.POST, instance=user)
 		if form.is_valid():
 			form.save()
 			return redirect(reverse('profile'))
 
-	else:
-		form = UserForm(instance=user)
-		context = {'form': form}
-		return render(request, 'polls/edit_profile.html', context)
+	form = UserForm(instance=user)
+	context = {'form': form}
+	return render(request, 'polls/edit_profile.html', context)
 
 
 
@@ -134,26 +135,18 @@ class PollDetailAPI(APIView):
 		serializer = PollOptionSerializer(option)
 		data = serializer.data
 
-		# mark poll voted by this browser
-		if request.user.is_anonymous:
-			# request.session.set_expiry(60*60*24*360)
-			option.vote += 1
-			option.save()
-			data={'is_anonymous': True}
-			data.update(serializer.data)
-		else:
-			# set up vote entry	
-			try:
-				entry, created = VoteEntry.objects.get_or_create(question=questionObj, 
-					user=request.user, voted_option=option)
-				if created:
-					# update the vote to database if user haven't voted yet
-					option.vote += 1
-					option.save()
-					serializer = PollOptionSerializer(option)
-					data = serializer.data
-			except Exception as e:
-				print(e)
+		# set up vote entry	
+		try:
+			entry, created = VoteEntry.objects.get_or_create(question=questionObj, 
+				user=request.user, voted_option=option)
+			if created:
+				# update the vote to database if user haven't voted yet
+				option.vote += 1
+				option.save()
+				serializer = PollOptionSerializer(option)
+				data = serializer.data
+		except Exception as e:
+			print(e)
 
 		return Response(data)
 

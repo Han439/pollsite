@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.getenv('DEBUG') == True)
+DEBUG = True
 
 ALLOWED_HOSTS = ['pollsiteapp.herokuapp.com', '127.0.0.1']
 
@@ -55,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'pollsite.urls'
@@ -130,14 +131,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-
 
 AUTH_USER_MODEL = 'users.MyUser'
 
+LOGIN_URL = 'login'
+LOGIN_EXEMPT_URLS = ['login', 'logout', 'registration', 'all_poll']
 LOGIN_REDIRECT_URL = 'all_poll'
 LOGOUT_REDIRECT_URL = 'all_poll'
+
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025

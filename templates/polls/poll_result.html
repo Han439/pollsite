@@ -27,44 +27,5 @@
 			</div>
 		{% endfor %}
 	</div>
-	<!-- <ul>
-		{% for tag in poll.tag.all %}
-		<li>{{ tag }}</li>
-		{% endfor %}
-	</ul> -->
-
-
-
-	<!-- <ul class="poll-result">
-		{% for option in poll.polloption_set.all %}
-		<li class="poll-result-detail">
-			{{ option.option }}
-			<div style="width:{{option.get_percentage}}%">
-			</div>
-			<span>{{ option.get_percentage }} %</span>
-		</li>
-		{% endfor %}
-	</ul> -->
-	<!-- <h4>Comments Section</h4>
-	{% if request.user.is_authenticated %}
-	<form method="POST">
-		{% csrf_token %}
-		{{form.as_p}}
-		<button type="submit">Send</button>
-	</form>
-	{% endif %}
-	<ul>
-		{% for comment in comments %}
-		<li>
-			<p>{{comment.user.first_name}}</p>
-			<p>{{comment.date}}</p>
-			<p>{{comment.comment}}</p>
-			{% if request.user == comment.user %}
-			<p><a href="{% url 'delete_comment' comment.id %}">delete</a></p>
-			<p><a href="{% url 'edit_comment' comment.id %}">edit</a></p>
-			{% endif %}
-		</li>
-		{% endfor %}
-	</ul> -->
 </div>
 {% endblock content %}
