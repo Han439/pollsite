@@ -14,11 +14,9 @@ class LoginRequiredMiddleware:
 
 		current_path = request.path_info
 
-		print(current_path)
-
 		is_exempt_url = any([current_path == reverse(path) for path in settings.LOGIN_EXEMPT_URLS])
 
 		if not request.user.is_authenticated and not is_exempt_url:
-			return redirect(settings.LOGIN_URL)
+			return redirect(''.join([reverse(settings.LOGIN_URL), '?next=', current_path])) 
 		else:
 			return None

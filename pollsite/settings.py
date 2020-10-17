@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['pollsiteapp.herokuapp.com', '127.0.0.1']
 
@@ -135,7 +135,7 @@ USE_TZ = True
 AUTH_USER_MODEL = 'users.MyUser'
 
 LOGIN_URL = 'login'
-LOGIN_EXEMPT_URLS = ['login', 'logout', 'registration', 'all_poll']
+LOGIN_EXEMPT_URLS = ['login', 'logout', 'registration', 'all_poll', 'admin:login']
 LOGIN_REDIRECT_URL = 'all_poll'
 LOGOUT_REDIRECT_URL = 'all_poll'
 
