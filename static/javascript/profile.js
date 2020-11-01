@@ -10,7 +10,7 @@ close.click(function(e) {
 	    dataType:'json',
 	    headers: {
 			'Content-type': 'application/json',
-			'X-CSRFToken': csrftoken,
+			'X-CSRFToken': Cookies.get('csrftoken'),
 			'Accept': 'application/json; indent=4',
 		},
 	    data: JSON.stringify({close: true}),

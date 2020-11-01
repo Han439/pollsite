@@ -21,7 +21,7 @@ from .serializers import PollOptionSerializer, PollQuestionSerializer
 def poll(request):
 	all_polls = PollQuestion.objects.all().order_by("-date")
 	
-	paginator = Paginator(all_polls, 9)
+	paginator = Paginator(all_polls, 6)
 
 	page_number = request.GET.get('page')
 	all_polls = paginator.get_page(page_number)
