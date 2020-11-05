@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-        
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -135,7 +135,8 @@ USE_TZ = True
 AUTH_USER_MODEL = 'users.MyUser'
 
 LOGIN_URL = 'login'
-LOGIN_EXEMPT_URLS = ['login', 'logout', 'registration', 'all_poll', 'admin:login']
+LOGIN_EXEMPT_URLS = ['login', 'logout',
+                     'registration', 'all_poll', 'admin:login', 'user-api']
 LOGIN_REDIRECT_URL = 'all_poll'
 LOGOUT_REDIRECT_URL = 'all_poll'
 
@@ -145,7 +146,11 @@ EMAIL_PORT = 1025
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 django_heroku.settings(locals())
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}

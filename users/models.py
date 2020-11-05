@@ -5,21 +5,20 @@ from .managers import CustomUserManager
 
 # Create your models here.
 
+
 class MyUser(AbstractUser):
-	username = None
-	email = models.EmailField(
-		_('Email Address'), 
-		unique=True, 
-		error_messages={
+    username = None
+    email = models.EmailField(
+        _('Email Address'),
+        unique=True,
+        error_messages={
             'unique': _("A user with that username already exists."),
         },)
 
-	# location = models.CharField(max_length=100, blank=True, null=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
-	USERNAME_FIELD = 'email'
-	REQUIRED_FIELDS = []
+    objects = CustomUserManager()
 
-	objects = CustomUserManager()
-
-	def __str__(self):
-		return self.email
+    def __str__(self):
+        return self.email

@@ -4,14 +4,23 @@ from .models import MyUser
 from django import forms
 from django.core.exceptions import ValidationError
 
+
+class UserForm(forms.ModelForm):
+
+    class Meta:
+        model = MyUser
+        fields = ('first_name', 'last_name')
+
+
 class CustomUserCreationForm(UserCreationForm):
 
-	class Meta(UserCreationForm):
-		model = MyUser
-		fields = ['email', 'first_name', 'last_name']
+    class Meta(UserCreationForm):
+        model = MyUser
+        fields = ['email', 'first_name', 'last_name']
+
 
 class CustomUserChangeForm(UserChangeForm):
 
-	class Meta:
-		model = MyUser
-		fields = ['email']
+    class Meta:
+        model = MyUser
+        fields = ['email']

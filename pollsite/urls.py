@@ -20,9 +20,17 @@ from django.shortcuts import render, redirect, reverse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/password_change/', auth_views.PasswordChangeView.as_view(success_url='/profile/'), 
-        name='password_change'),
-    path('accounts/', include('django.contrib.auth.urls')),
     path('', include('users.urls')),
     path('', include('polls.urls')),
+]
+
+urlpatterns += [
+    path('accounts/password_change/',
+         auth_views.PasswordChangeView.as_view(success_url='/profile/'),
+         name='password_change'),
+    path('accounts/', include('django.contrib.auth.urls')),
+]
+
+urlpatterns += [
+    path('api-auth/', include('rest_framework.urls'))
 ]
